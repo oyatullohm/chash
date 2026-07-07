@@ -2,7 +2,6 @@ import json
 import re
 
 from django.core.management.base import BaseCommand
-from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
@@ -58,9 +57,13 @@ class Command(BaseCommand):
             username = phone_number if phone_number else code
 
             discount_percent_value = item.get("discountPercent", 0) or 0
-            discount_percent_obj, _ = DiscountPercent.objects.get_or_create(
+            discount_percent_obj = DiscountPercent.objects.filter(
                 percent=discount_percent_value
-            )
+            ).order_by("id").first()
+            if discount_percent_obj is None:
+                discount_percent_obj = DiscountPercent.objects.create(
+                    percent=discount_percent_value
+                )
 
             defaults = {
                 "username": username,
@@ -78,32 +81,35 @@ class Command(BaseCommand):
                 "phone_number": phone_number,
             }
 
-            try:
-                with transaction.atomic():
-                    user, created = CustomUser.objects.update_or_create(
-                        code=code,
-                        defaults=defaults,
-                    )
-
-                    # uid1c faqat yangi yaratilganda yoki bo'sh bo'lsa o'rnatiladi
-                    if created or not user.uid1c:
-                        user.uid1c = item["uid1c"]
-
-                    if created:
-                        user.set_unusable_password()
-
-                    user.save()
-            except IntegrityError as e:
+            # username boshqa (boshqa code'ga tegishli) userda band bo'lsa - pass
+            username_taken = (
+                CustomUser.objects
+                .filter(username=username)
+                .exclude(code=code)
+                .exists()
+            )
+            if username_taken:
                 skipped_count += 1
                 self.stdout.write(
-                    self.style.WARNING(f"O'tkazib yuborildi (IntegrityError, code={code}): {e}")
+                    self.style.WARNING(f"O'tkazib yuborildi (username band): {username!r} (code={code})")
                 )
                 continue
 
+            user, created = CustomUser.objects.update_or_create(
+                code=code,
+                defaults=defaults,
+            )
+
+            if created or not user.uid1c:
+                user.uid1c = item["uid1c"]
+
             if created:
+                user.set_unusable_password()
                 created_count += 1
             else:
                 updated_count += 1
+
+            user.save()
 
         self.stdout.write(
             self.style.SUCCESS(

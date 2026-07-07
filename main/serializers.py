@@ -33,7 +33,7 @@ class DiscountCardTransactionSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = "__all__"
+        fields = ['id', 'uid1c','code', 'first_name', 'last_name',  'phone_number', 'is_active','date_joined']
 
 class QrCodeSerializer(serializers.ModelSerializer):
     # qr_url = serializers.ReadOnlyField()

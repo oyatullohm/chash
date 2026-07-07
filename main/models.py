@@ -122,8 +122,6 @@ class CustomUser(AbstractUser):
  
         if not self.discount_percent_id:
             last_discount = DiscountPercent.objects.order_by("id").last()
-            if last_discount is None:
-                last_discount = DiscountPercent.objects.create(percent=1)
             self.discount_percent = last_discount
  
         # Agar code hali generatsiya qilinmagan bo'lsa (yangi user),

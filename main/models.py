@@ -195,7 +195,7 @@ class QrCode(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    BASE_URL = "http://localhost:8000/api/v1/code/"
+    BASE_URL = "http://93.170.11.70:7070/api/v1/code/"
 
     @property
     def qr_url(self):

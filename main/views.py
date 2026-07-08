@@ -77,7 +77,7 @@ def api_user_register(request):
         last_name=last_name,
         first_name=first_name,
         # address=address,
-        login_code=login_code
+        # login_code=login_code
     )
     if user:
         otp = random_number()
@@ -169,7 +169,7 @@ def get_code(request, uid):
     return Response({"success": False, "message": "QR code not found."}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def refresh(request):
     refresh_token = request.data.get('refresh')
     if refresh_token is None:

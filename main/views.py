@@ -3,10 +3,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.views.decorators.csrf import csrf_exempt
-from main.Trasaciton import sync_card_transactions
+from .Trasaciton import sync_card_transactions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .tasks import my_background_task
 from django.http import JsonResponse
+from django.core.cache import cache
 from django.db import transaction
 from rest_framework import status
 from .serializers import *
@@ -116,6 +118,11 @@ def api_user_register_phone(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_balance(request):
+    key = f"user_active:{request.user.id}"
+
+    if not cache.get(key):
+        cache.set(key, True, timeout=60 * 60 * 24)  # 1 kun
+        my_background_task.delay(request.user.id)
     try:
         # code = request.user.code
         code = "7802139070649"
@@ -128,6 +135,11 @@ def user_balance(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def api_translation(request):
+    key = f"user_active:{request.user.id}"
+
+    if not cache.get(key):
+        cache.set(key, True, timeout=60 * 60 * 24)  # 1 kun
+        my_background_task.delay(request.user.id)
     try:
         # code = request.user.code
         code = "7802139070649"

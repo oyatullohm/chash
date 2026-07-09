@@ -114,6 +114,11 @@ def api_user_register_phone(request):
         return Response({'success': False, 'message': response['error']})
     return Response({'success': True, 'message': 'SMS yuborildi', 'otp': otp, 'user_id': user.code})
 
+import logging
+from django.utils import timezone
+
+logger = logging.getLogger(__name__)
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -123,6 +128,15 @@ def user_balance(request):
     if not cache.get(key):
         cache.set(key, True, timeout=60 * 60 * 24)  # 1 kun
         my_background_task.delay(request.user.id)
+        logger.info(
+        f"[{timezone.now()}] Celery task queuega yuborildi. "
+        f"user_id={request.user.id}"
+    )
+    else:
+        logger.info(
+        f"[{timezone.now()}] Celery task queuega yuborilmadi. "
+        f"user_id={request.user.id}"
+    )
     try:
         # code = request.user.code
         code = "7802139070649"

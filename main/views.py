@@ -35,10 +35,10 @@ def api_send_sms(request):
             otp = 12345
         user.login_code = otp
         user.save()
-        # response = send_sms(user.phone_number, otp)
-        # if "error" in response:
-            # return Response({'success':False,'message':response['error'] })
-        return Response({'success':True,'message':'SMS yuborildi','otp':otp, })
+        response = send_sms(user.phone_number, otp)
+        if "error" in response:
+            return Response({'success':False,'message':response['error'] })
+        return Response({'success':True,'message':'SMS yuborildi','otp':otp, 'response':response })
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -86,11 +86,11 @@ def api_user_register(request):
         otp = random_number()
         user.login_code = otp
         user.save()
-        # result = create_1c_user(user) 
-        # response = send_sms(user.phone_number, otp)
-        # if "error" in response:
-        #     return Response({'success':False,'message':response['error'] })
-        # return Response({'success':True,'message':'SMS yuborildi','otp':otp, 'user_id': user.code, 'result':result})
+        result = create_1c_user(user) 
+        response = send_sms(user.phone_number, otp)
+        if "error" in response:
+            return Response({'success':False,'message':response['error'] })
+        return Response({'success':True,'message':'SMS yuborildi','otp':otp, 'user_id': user.code, 'result':result})
     return JsonResponse({"message": "Registration failed.", 'success': False,}, status=status.HTTP_400_BAD_REQUEST)
 
 

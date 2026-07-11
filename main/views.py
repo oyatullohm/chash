@@ -166,8 +166,15 @@ class TranslationsApiView(APIView):
                 {"success": False, "message": f"1C bilan bog'lanishda xato: {e}"},
                 status=status.HTTP_502_BAD_GATEWAY,
             )
- 
-        return Response({"success": True, "code": report.code})
+        try:
+            # code = request.user.code
+            code = "7802139070649"
+            balance = DiscountCardReport.objects.get(code=code)
+        except DiscountCardReport.DoesNotExist:
+            return Response({'success': False, 'message': 'Balance not found'}, status=status.HTTP_404_NOT_FOUND)
+        balance_data = DiscountCardReportSerializer1(balance).data
+
+        return Response({"success": True, "code": report.code, "balance": balance_data})
 
 
 

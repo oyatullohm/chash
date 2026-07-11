@@ -35,10 +35,10 @@ def api_send_sms(request):
             otp = 12345
         user.login_code = otp
         user.save()
-        response = send_sms(user.phone_number, otp)
-        if "error" in response:
-            return Response({'success':False,'message':response['error'] })
-        return Response({'success':True,'message':'SMS yuborildi','otp':otp, 'response':response})
+        # response = send_sms(user.phone_number, otp)
+        # if "error" in response:
+            # return Response({'success':False,'message':response['error'] })
+        return Response({'success':True,'message':'SMS yuborildi','otp':otp, })
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -70,7 +70,7 @@ def api_user_register(request):
     # address = data.get('address', '')
     phone_number = data.get('phone', '')
     username = phone_number
-    login_code = random_number()
+    # login_code = random_number()
     
     if CustomUser.objects.filter(username=username).exists():
         return JsonResponse({"message": "Username already exists.", 'success': False}, status=status.HTTP_400_BAD_REQUEST)
@@ -86,11 +86,11 @@ def api_user_register(request):
         otp = random_number()
         user.login_code = otp
         user.save()
-        result = create_1c_user(user) 
-        response = send_sms(user.phone_number, otp)
-        if "error" in response:
-            return Response({'success':False,'message':response['error'] })
-        return Response({'success':True,'message':'SMS yuborildi','otp':otp, 'user_id': user.code, 'result':result})
+        # result = create_1c_user(user) 
+        # response = send_sms(user.phone_number, otp)
+        # if "error" in response:
+        #     return Response({'success':False,'message':response['error'] })
+        # return Response({'success':True,'message':'SMS yuborildi','otp':otp, 'user_id': user.code, 'result':result})
     return JsonResponse({"message": "Registration failed.", 'success': False,}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -143,11 +143,31 @@ def api_translation(request):
 
     
 
+
+from .Trasaciton import (
+    sync_card_transactions,
+    CardNotFoundError,
+    Card1CApiError,
+)
+ 
+ 
 class TranslationsApiView(APIView):
     def get(self, request):
-        code = request.user.code
-        sync_card_transactions(code=code)
-        return Response({"success": True,})
+        user = request.user
+        try:
+            report = sync_card_transactions(card_code=user.code)
+        except CardNotFoundError:
+            return Response(
+                {"success": False, "message": "Karta 1C tizimida topilmadi."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Card1CApiError as e:
+            return Response(
+                {"success": False, "message": f"1C bilan bog'lanishda xato: {e}"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+ 
+        return Response({"success": True, "code": report.code})
 
 
 

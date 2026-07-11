@@ -1,12 +1,24 @@
 from datetime import datetime
+
 import requests
-from django.db import transaction
-from .models import DiscountCardReport, DiscountCardTransaction
 from django.conf import settings
+from django.db import transaction
+
+from .models import DiscountCardReport, DiscountCardTransaction
 
 BASE_URL = "http://test.ksbapps.uz:17777/afm/hs/discount_api/transactions"
 LOGIN = settings.API_1C_LOGIN
 PASSWORD = settings.API_1C_PASSWD
+
+
+class CardNotFoundError(Exception):
+    """1C'da shu kod bilan karta topilmaganda ko'tariladi."""
+    pass
+
+
+class Card1CApiError(Exception):
+    """1C API bilan boshqa turdagi xato (500, timeout va h.k.) yuz berganda ko'tariladi."""
+    pass
 
 
 def parse_iso_datetime(value: str):
@@ -18,30 +30,43 @@ def parse_iso_datetime(value: str):
         return None
 
 
-def fetch_card_transactions(code: str, date_from: str = None, date_to: str = None) -> dict:
-    params = {"code": code}
+def fetch_card_transactions(card_code: str, date_from: str = None, date_to: str = None) -> dict:
+    params = {"code": card_code}
     if date_from:
         params["dateFrom"] = date_from
     if date_to:
         params["dateTo"] = date_to
 
-    response = requests.get(BASE_URL, params=params, auth=(LOGIN, PASSWORD), timeout=30)
-    response.raise_for_status()
+    try:
+        response = requests.get(BASE_URL, params=params, auth=(LOGIN, PASSWORD), timeout=30)
+    except requests.RequestException as e:
+        raise Card1CApiError(f"1C serverga ulanishda xato: {e}")
+
+    if response.status_code == 400:
+        # Hujjatga ko'ra: karta topilmasa yoki parametr xato bo'lsa 400 qaytadi,
+        # javob tanasi oddiy matn (masalan "Дисконт карта топилмади")
+        raise CardNotFoundError(
+            f"Karta topilmadi yoki so'rov xato (code={card_code}): {response.text}"
+        )
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        raise Card1CApiError(f"1C API xatosi (status={response.status_code}): {response.text[:300]}")
+
     return response.json()
 
 
-def sync_card_transactions(code: str, date_from: str = None, date_to: str = None):
+def sync_card_transactions(card_code: str, date_from: str = None, date_to: str = None):
     """
-    Tezlashtirilgan versiya:
-      - Report: bitta update_or_create (o'zgarishsiz)
-      - Transactions: bitta SELECT bilan mavjudlarini o'qiydi, so'ng faqat
-        yangilarini bitta bulk_create bilan yozadi (N ta alohida so'rov o'rniga
-        atigi 2 ta so'rov - 1 SELECT + 1 INSERT).
+    - Report: bitta update_or_create
+    - Transactions: mavjudlarini 1 SELECT bilan o'qib, faqat yangilarini bulk_create qiladi
+    - Agar 1C'da karta topilmasa -> CardNotFoundError ko'tariladi (chaqiruvchi ushlab, mos javob qaytarishi kerak)
     """
-    data = fetch_card_transactions(code, date_from, date_to)
+    data = fetch_card_transactions(card_code, date_from, date_to)
 
     with transaction.atomic():
-        code, created = DiscountCardReport.objects.update_or_create(
+        report, created = DiscountCardReport.objects.update_or_create(
             code=data["code"],
             defaults={
                 "uid1c": data["uid1c"],
@@ -58,14 +83,12 @@ def sync_card_transactions(code: str, date_from: str = None, date_to: str = None
 
         items = data.get("transactions", [])
 
-        # 1) Mavjud tranzaksiyalarning kalitlarini BITTA so'rov bilan olamiz
         existing_keys = set(
             DiscountCardTransaction.objects
-            .filter(code=code)
+            .filter(code=report)
             .values_list("doc_number", "doc_date", "row_number")
         )
 
-        # 2) Faqat bazada yo'q bo'lganlarini tayyorlaymiz
         new_objects = []
         for item in items:
             doc_date = parse_iso_datetime(item["docDate"])
@@ -75,7 +98,7 @@ def sync_card_transactions(code: str, date_from: str = None, date_to: str = None
 
             new_objects.append(
                 DiscountCardTransaction(
-                    code=code,
+                    code=report,
                     docguid=item.get("docGuid"),
                     doc_presentation=item.get("docPresentation", ""),
                     doc_number=item["docNumber"],
@@ -88,20 +111,11 @@ def sync_card_transactions(code: str, date_from: str = None, date_to: str = None
                 )
             )
 
-        # 3) Hammasini BITTA so'rov bilan yozamiz
         if new_objects:
             DiscountCardTransaction.objects.bulk_create(
                 new_objects,
                 batch_size=500,
-                ignore_conflicts=True,  # unique constraint bo'yicha qo'shimcha xavfsizlik
+                ignore_conflicts=True,
             )
 
-    # print(
-    #     f"Report {'yaratildi' if created else 'yangilandi'}: {code}. "
-    #     f"Jami: {len(items)} ta, yangi qo'shildi: {len(new_objects)} ta"
-    # )
-    return code
-
-
-# if __name__ == "__main__":
-#     sync_card_transactions(code="7802139070649")
+    return report

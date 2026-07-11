@@ -1,7 +1,6 @@
 from django.urls import path
 from .views import *
 urlpatterns = [
-
     path('refresh-translation/', TranslationsApiView.as_view()),
     path('register/', api_user_register),
     path('register/phone/', api_user_register_phone),

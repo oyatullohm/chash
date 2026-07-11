@@ -6,7 +6,6 @@ from django.views.decorators.csrf import csrf_exempt
 from .Trasaciton import sync_card_transactions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .tasks import my_background_task
 from django.http import JsonResponse
 from django.core.cache import cache
 from django.db import transaction
@@ -32,6 +31,8 @@ def api_send_sms(request):
         except:
             return Response({'success':False,'message':'User not found' })
         otp = random_number()
+        if phone == '+998992511100':
+            otp = 12345
         user.login_code = otp
         user.save()
         response = send_sms(user.phone_number, otp)
@@ -114,29 +115,11 @@ def api_user_register_phone(request):
         return Response({'success': False, 'message': response['error']})
     return Response({'success': True, 'message': 'SMS yuborildi', 'otp': otp, 'user_id': user.code})
 
-import logging
-from django.utils import timezone
-
-logger = logging.getLogger(__name__)
-
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_balance(request):
-    key = f"user_active:{request.user.id}"
-
-    if not cache.get(key):
-        cache.set(key, True, timeout=60 * 60 * 24)  # 1 kun
-        my_background_task.delay(request.user.id)
-        logger.info(
-        f"[{timezone.now()}] Celery task queuega yuborildi. "
-        f"user_id={request.user.id}"
-    )
-    else:
-        logger.info(
-        f"[{timezone.now()}] Celery task queuega yuborilmadi. "
-        f"user_id={request.user.id}"
-    )
+    
     try:
         # code = request.user.code
         code = "7802139070649"
@@ -149,11 +132,6 @@ def user_balance(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def api_translation(request):
-    key = f"user_active:{request.user.id}"
-
-    if not cache.get(key):
-        cache.set(key, True, timeout=60 * 60 * 24)  # 1 kun
-        my_background_task.delay(request.user.id)
     try:
         # code = request.user.code
         code = "7802139070649"

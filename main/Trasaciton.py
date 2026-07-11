@@ -96,12 +96,12 @@ def sync_card_transactions(code: str, date_from: str = None, date_to: str = None
                 ignore_conflicts=True,  # unique constraint bo'yicha qo'shimcha xavfsizlik
             )
 
-    print(
-        f"Report {'yaratildi' if created else 'yangilandi'}: {code}. "
-        f"Jami: {len(items)} ta, yangi qo'shildi: {len(new_objects)} ta"
-    )
+    # print(
+    #     f"Report {'yaratildi' if created else 'yangilandi'}: {code}. "
+    #     f"Jami: {len(items)} ta, yangi qo'shildi: {len(new_objects)} ta"
+    # )
     return code
 
 
-if __name__ == "__main__":
-    sync_card_transactions(code="7802139070649")
+# if __name__ == "__main__":
+#     sync_card_transactions(code="7802139070649")

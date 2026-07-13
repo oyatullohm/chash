@@ -121,8 +121,8 @@ def api_user_register_phone(request):
 def user_balance(request):
     
     try:
-        # code = request.user.code
-        code = "7802139070649"
+        code = request.user.code
+        #code = "7802139070649"
         balance = DiscountCardReport.objects.get(code=code)
     except DiscountCardReport.DoesNotExist:
         return Response({'success': False, 'message': 'Balance not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -211,4 +211,5 @@ def refresh(request):
         return Response({'access': access_token}, status=status.HTTP_200_OK)
     except:
         return Response({'error': 'Invalid refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
+
 

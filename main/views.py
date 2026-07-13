@@ -133,8 +133,8 @@ def user_balance(request):
 @permission_classes([IsAuthenticated])
 def api_translation(request):
     try:
-        # code = request.user.code
-        code = "7802139070649"
+        code = request.user.code
+        #code = "7802139070649"
         balance = DiscountCardReport.objects.get(code=code)
     except DiscountCardReport.DoesNotExist:
         return Response({'success': False, 'message': 'Balance not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -167,8 +167,8 @@ class TranslationsApiView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY,
             )
         try:
-            # code = request.user.code
-            code = "7802139070649"
+            code = request.user.code
+            #code = "7802139070649"
             balance = DiscountCardReport.objects.get(code=code)
         except DiscountCardReport.DoesNotExist:
             return Response({'success': False, 'message': 'Balance not found'}, status=status.HTTP_404_NOT_FOUND)

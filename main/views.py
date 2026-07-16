@@ -75,7 +75,7 @@ def api_user_register(request):
     # login_code = random_number()
     
     if CustomUser.objects.filter(username=username).exists():
-        return JsonResponse({"message": "Username already exists.", 'success': False}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"message": "bu foydalanuvchi allaqachon ro'yxatdan o'tgan.", 'success': False}, status=status.HTTP_400_BAD_REQUEST)
     user = CustomUser.objects.create_user(
         username=username,
         phone_number=phone_number,

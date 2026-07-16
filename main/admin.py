@@ -10,7 +10,7 @@ admin.site.unregister(Group)
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ("code", "full_name", "phone_number", "is_active", "discount_percent", "date_joined")
     search_fields = ("code", "full_name", "phone_number", "uid1c")
-    list_filter = ("is_active", "discount_percent")
+    list_filter = ("is_active", )
     ordering = ("-date_joined",)
     readonly_fields = ("uid1c", "code", "date_joined", "last_login")
 

@@ -3,6 +3,7 @@ from datetime import datetime
 import requests
 from django.conf import settings
 from django.db import transaction
+from django.utils import timezone
 
 from .models import DiscountCardReport, DiscountCardTransaction
 
@@ -25,9 +26,16 @@ def parse_iso_datetime(value: str):
     if not value:
         return None
     try:
-        return datetime.fromisoformat(value)
+        dt = datetime.fromisoformat(value)
     except ValueError:
         return None
+
+    if timezone.is_naive(dt):
+        try:
+            dt = timezone.make_aware(dt)
+        except Exception:
+            pass
+    return dt
 
 
 def fetch_card_transactions(card_code: str, date_from: str = None, date_to: str = None) -> dict:

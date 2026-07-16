@@ -12,5 +12,6 @@ urlpatterns = [
     path('code/<str:uid>/', get_code),
     path('refresh/', refresh),
     path('balance/', user_balance),
-    path('translation/', api_translation)
+    path('translation/', api_translation),
+    path('category/', category)
 ]

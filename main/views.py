@@ -212,3 +212,9 @@ def refresh(request):
     except:
         return Response({'error': 'Invalid refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+@api_view(['GET'])
+def category(request):
+    categories = Category.objects.all()
+    serializer = CategorySerializer(categories, many=True, context={'request':request})
+    return Response({'success': True, 'categories': serializer.data})

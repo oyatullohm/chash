@@ -66,5 +66,5 @@ venv/
 media/
 data.json
 
-
+firebase-service-account.json
 cart.json

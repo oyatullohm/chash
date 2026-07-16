@@ -46,10 +46,12 @@ def api_send_sms(request):
 def api_login(request):
     data = request.data
     code = data.get('code')
+    firebase_key = data.get('firebase_key', None)
     user = CustomUser.objects.get(login_code=code)
     if user:
         refresh = RefreshToken.for_user(user)
         user.login_code = random_number()
+        user.firebase_key = firebase_key
         user.save()
         return JsonResponse({
             "message": "Login successful.",

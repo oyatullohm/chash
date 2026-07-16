@@ -277,3 +277,37 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.d_id} - {self.name}"
+
+
+from django.db import models
+
+from .models import CustomUser
+
+
+class Notification(models.Model):
+
+    recipient = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="notifications",
+        verbose_name="Qabul qiluvchi (bo'sh = hammaga)",
+    )
+    message = models.TextField(verbose_name="Xabar matni")
+
+    is_sent = models.BooleanField(default=False, editable=False, verbose_name="Yuborilgan")
+    sent_count = models.PositiveIntegerField(default=0, editable=False, verbose_name="Yuborilganlar soni")
+    failed_count = models.PositiveIntegerField(default=0, editable=False, verbose_name="Xato bo'lganlar soni")
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan vaqti")
+    sent_at = models.DateTimeField(null=True, blank=True, editable=False, verbose_name="Yuborilgan vaqti")
+
+    class Meta:
+        verbose_name = "Bildirishnoma"
+        verbose_name_plural = "Bildirishnomalar"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        target = self.recipient.code if self.recipient else "HAMMAGA"
+        return f"{target}: {self.message[:50]}"

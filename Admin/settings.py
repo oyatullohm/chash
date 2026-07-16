@@ -17,6 +17,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -28,6 +29,35 @@ INSTALLED_APPS = [
     
     'main.apps.MainConfig',
 ]
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Karta Admin",
+    "site_header": "Diskont Kartalar",
+    "site_brand": "Karta Admin",
+    "welcome_sign": "Boshqaruv paneliga xush kelibsiz",
+    "copyright": "Karta Tizimi",
+    "search_model": ["main.CustomUser", "main.DiscountCardReport", "main.Category"],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "main.CustomUser": "fas fa-id-card",
+        "main.DiscountCardReport": "fas fa-file-invoice-dollar",
+        "main.Category": "fas fa-folder",
+        "main.Notification": "fas fa-bell",
+    },
+    "order_with_respect_to": ["main", "main.CustomUser", "main.DiscountCardReport", "main.Category", "main.Notification"],
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",       # boshqa variantlar: "cosmo", "cyborg", "darkly", "litera", "lux", "minty" va h.k.
+    "dark_mode_theme": None,
+    "navbar": "navbar-dark",
+    "sidebar": "sidebar-dark-primary",
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -141,6 +171,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+FIREBASE_CREDENTIALS_PATH = BASE_DIR / "firebase-service-account.json"
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'

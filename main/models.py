@@ -45,7 +45,7 @@ class CustomUser(AbstractUser):
  
     address = models.CharField(max_length=500, blank=True, verbose_name="Manzil")
     phone_number = models.CharField(max_length=20, blank=True, verbose_name="Telefon raqami")
- 
+    firebase_key = models.CharField(max_length=500, null=True, blank=True)
     class Meta:
         verbose_name = "Foydalanuvchi"
         verbose_name_plural = "Foydalanuvchilar"
@@ -157,6 +157,7 @@ class DiscountCardReport(models.Model):
     total_expense = models.DecimalField(max_digits=18,decimal_places=2,default=0)
     closing_balance = models.DecimalField(max_digits=18,decimal_places=2,default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return f"{self.code} - {self.full_name}"
 
@@ -242,3 +243,37 @@ class QrCode(models.Model):
 def delete_qr_image_file(sender, instance, **kwargs):
     if instance.image:
         instance.image.delete(save=False)
+        
+        
+from django.db import models
+
+
+class Category(models.Model):
+    d_id = models.PositiveIntegerField(primary_key=True, verbose_name="Tashqi ID")
+
+    author_id = models.IntegerField(default=0, verbose_name="Muallif ID")
+    initiator_id = models.IntegerField(default=0, verbose_name="Boshlovchi ID")
+    image = models.ImageField(upload_to="category_images/", blank=True, null=True, verbose_name="Rasm")
+    created_at = models.DateTimeField(verbose_name="Yaratilgan vaqti")
+    updated_at = models.DateTimeField(verbose_name="Yangilangan vaqti")
+
+    parent_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+
+    )
+
+    name = models.CharField(max_length=255, verbose_name="Nomi")
+    description = models.TextField(blank=True, verbose_name="Tavsif")
+
+    record_status_id = models.IntegerField(default=200, verbose_name="Holat ID")
+
+    class Meta:
+        verbose_name = "Kategoriya"
+        verbose_name_plural = "Kategoriyalar"
+        # indexes = [
+        #     # models.Index(fields=["parent"]),
+        # ]
+
+    def __str__(self):
+        return f"{self.d_id} - {self.name}"

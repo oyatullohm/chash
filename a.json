@@ -1,0 +1,136 @@
+{
+  "items": [
+    {
+      "id": 6963,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.414002+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "БАД",
+      "description": "Биологически активная добавка",
+      "record_status_id": 200
+    },
+    {
+      "id": 6965,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.422824+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "ДП",
+      "description": "Детское питание",
+      "record_status_id": 200
+    },
+    {
+      "id": 6966,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.426885+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "ДС",
+      "description": "Дезинфицирующие средства",
+      "record_status_id": 200
+    },
+    {
+      "id": 6967,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.431038+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "ИМН",
+      "description": "Изделия медицинского назначения",
+      "record_status_id": 200
+    },
+    {
+      "id": 6968,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.434879+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "К",
+      "description": "Косметика",
+      "record_status_id": 200
+    },
+    {
+      "id": 6970,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.444709+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "ЛС",
+      "description": "Лекарственные средства",
+      "record_status_id": 200
+    },
+    {
+      "id": 6973,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.460105+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "ТНП",
+      "description": "Товары народного потребления",
+      "record_status_id": 200
+    },
+    {
+      "id": 6974,
+      "author_id": 0,
+      "initiator_id": 20,
+      "created_at": "2023-06-21T07:55:16.463950+00:00",
+      "updated_at": "2024-06-13T11:13:43.391546+00:00",
+      "parent_id": 2,
+      "name": "ТМиД",
+      "description": "Товары для мам и детей",
+      "record_status_id": 200
+    },
+    {
+      "id": 8431,
+      "author_id": 13,
+      "initiator_id": 13,
+      "created_at": "2025-02-18T13:59:56.474668+00:00",
+      "updated_at": "2025-02-18T13:59:56.474668+00:00",
+      "parent_id": 2,
+      "name": "Здоровое питание",
+      "description": "Здоровое питание",
+      "record_status_id": 200
+    },
+    {
+      "id": 8728,
+      "author_id": 13,
+      "initiator_id": 13,
+      "created_at": "2025-06-23T14:25:05.303339+00:00",
+      "updated_at": "2025-06-23T14:25:05.303339+00:00",
+      "parent_id": 2,
+      "name": "Субстанции",
+      "description": "Субстанции",
+      "record_status_id": 200
+    },
+    {
+      "id": 8863,
+      "author_id": 13,
+      "initiator_id": 13,
+      "created_at": "2025-11-24T14:39:14.315093+00:00",
+      "updated_at": "2025-11-24T14:39:14.315093+00:00",
+      "parent_id": 2,
+      "name": "Спортивное питание",
+      "description": "Спортивное питание",
+      "record_status_id": 200
+    },
+    {
+      "id": 8929,
+      "author_id": 5,
+      "initiator_id": 5,
+      "created_at": "2026-01-19T14:28:19.355079+00:00",
+      "updated_at": "2026-01-19T14:28:19.355079+00:00",
+      "parent_id": 2,
+      "name": "Не определена",
+      "description": "Не определена",
+      "record_status_id": 200
+    }
+  ]
+}

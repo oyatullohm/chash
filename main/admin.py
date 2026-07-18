@@ -8,8 +8,8 @@ admin.site.unregister(Group)
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ("code", "full_name", "phone_number", "is_active", "discount_percent", "date_joined")
-    search_fields = ("code", "full_name", "phone_number", "uid1c")
+    list_display = ("code", "first_name", "last_name", "phone_number", "is_active", "discount_percent", "date_joined")
+    search_fields = ("code", "first_name", "last_name", "phone_number", "uid1c")
     list_filter = ("is_active", )
     ordering = ("-date_joined",)
     readonly_fields = ("uid1c", "code", "date_joined", "last_login")

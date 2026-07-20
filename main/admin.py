@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
 from django.contrib.auth.models import Group
-from .models import DiscountCardReport, CustomUser, Category, Notification
+from .models import DiscountCardReport, CustomUser, Category, Notification , GlavniImage
 from .firebase_utils import send_push_notification
 admin.site.unregister(Group)
 
@@ -88,3 +88,10 @@ class NotificationAdmin(admin.ModelAdmin):
         notification.failed_count = failed_count
         notification.sent_at = timezone.now()
         notification.save(update_fields=["is_sent", "sent_count", "failed_count", "sent_at"])
+        
+@admin.register(GlavniImage)
+class GlavniImageAdmin(admin.ModelAdmin):
+    list_display = ("id", "image", )
+    search_fields = ("id",)
+    ordering = ("-id",)
+    

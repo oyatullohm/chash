@@ -221,3 +221,10 @@ def category(request):
     categories = Category.objects.all()
     serializer = CategorySerializer(categories, many=True, context={'request':request})
     return Response({'success': True, 'categories': serializer.data})
+
+
+@api_view(['GET'])
+def glavniy_images(request):
+    images = GlavniImage.objects.all()
+    serializer = GlavniySerializer(images, many=True, context={'request': request})
+    return Response({'success': True, 'images': serializer.data})

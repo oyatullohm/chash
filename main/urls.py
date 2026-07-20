@@ -13,5 +13,6 @@ urlpatterns = [
     path('refresh/', refresh),
     path('balance/', user_balance),
     path('translation/', api_translation),
-    path('category/', category)
+    path('category/', category),
+    path('glavniy-images/', glavniy_images),
 ]

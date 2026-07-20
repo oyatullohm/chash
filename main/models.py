@@ -311,3 +311,19 @@ class Notification(models.Model):
     def __str__(self):
         target = self.recipient.code if self.recipient else "HAMMAGA"
         return f"{target}: {self.message[:50]}"
+    
+class GlavniImage(models.Model):
+    image = models.ImageField(upload_to="glavni_images/", blank=True, null=True, verbose_name="Rasm")
+    class Meta:
+        verbose_name = "Asosiy Rasm"
+        verbose_name_plural = "Asosiy Rasmlar"
+    def __str__(self):
+        return f"Glavni Image {self.id}"
+    
+    def save(self):
+        """agar rasim update qilinsa, eski rasmni o'chirib yuboradi"""
+        if self.pk:  # Agar ob'ekt allaqachon saqlangan bo'lsa
+            old_image = GlavniImage.objects.get(pk=self.pk)
+            if old_image.image != self.image:  # Agar rasm o'zgargan bo'lsa
+                old_image.image.delete(save=False)
+        return super().save(self)

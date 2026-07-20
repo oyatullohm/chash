@@ -1,4 +1,4 @@
-from .models import Category, CustomUser , DiscountCardReport , DiscountCardTransaction, QrCode  
+from .models import Category, CustomUser , DiscountCardReport , DiscountCardTransaction, QrCode , GlavniImage  
 from rest_framework import serializers
 
 class DiscountCardTransaction1Serializer(serializers.ModelField):
@@ -46,3 +46,8 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+    
+class GlavniySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GlavniImage
+        fields = ['id', 'image']

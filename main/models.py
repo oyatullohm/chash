@@ -320,10 +320,10 @@ class GlavniImage(models.Model):
     def __str__(self):
         return f"Glavni Image {self.id}"
     
-    def save(self):
-        """agar rasim update qilinsa, eski rasmni o'chirib yuboradi"""
-        if self.pk:  # Agar ob'ekt allaqachon saqlangan bo'lsa
+    def save(self, *args, **kwargs):
+        """agar rasm update qilinsa, eski rasmni o'chirib yuboradi"""
+        if self.pk:
             old_image = GlavniImage.objects.get(pk=self.pk)
-            if old_image.image != self.image:  # Agar rasm o'zgargan bo'lsa
+            if old_image.image != self.image:
                 old_image.image.delete(save=False)
-        return super().save(self)
+        return super().save(*args, **kwargs) 

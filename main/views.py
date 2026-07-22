@@ -219,8 +219,9 @@ def refresh(request):
 @api_view(['GET'])
 def category(request):
     categories = Category.objects.all()
-    serializer = CategorySerializer(categories, many=True, context={'request':request})
-    return Response({'success': True, 'categories': serializer.data})
+    serializer_ru = CategorySerializer_ru(categories, many=True, context={'request':request})
+    serializer_uz = CategorySerializer_uz(categories, many=True, context={'request':request})
+    return Response({'success': True, 'ru': serializer_ru.data, 'uz': serializer_uz.data})
 
 
 @api_view(['GET'])

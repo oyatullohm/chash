@@ -42,11 +42,25 @@ class QrCodeSerializer(serializers.ModelSerializer):
         fields = ['code' , 'image']
         read_only_fields = ["image", 'code']
 
-class CategorySerializer(serializers.ModelSerializer):
+from rest_framework import serializers
+from .models import Category  # Modelingizni import qiling
+
+from rest_framework import serializers
+from .models import Category
+
+class CategorySerializer_ru(serializers.ModelSerializer):
+
     class Meta:
         model = Category
-        fields = "__all__"
-    
+        fields = [ "d_id","author_id","name_ru",  "initiator_id", "image", "created_at", "updated_at", "parent_id", "record_status_id"]
+
+class CategorySerializer_uz(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = [ "d_id","author_id","name_uz",  "initiator_id", "image", "created_at", "updated_at", "parent_id", "record_status_id"]
+
+
 class GlavniySerializer(serializers.ModelSerializer):
     class Meta:
         model = GlavniImage

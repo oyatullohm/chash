@@ -263,7 +263,8 @@ class Category(models.Model):
 
     )
 
-    name = models.CharField(max_length=255, verbose_name="Nomi")
+    name_ru = models.CharField(max_length=255, verbose_name="Nomi")
+    name_uz = models.CharField(max_length=255, verbose_name="Nomi", default="O'zbekcha nomi yo'q")
     description = models.TextField(blank=True, verbose_name="Tavsif")
 
     record_status_id = models.IntegerField(default=200, verbose_name="Holat ID")
@@ -277,11 +278,6 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.d_id} - {self.name}"
-
-
-from django.db import models
-
-from .models import CustomUser
 
 
 class Notification(models.Model):

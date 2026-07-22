@@ -277,7 +277,7 @@ class Category(models.Model):
         # ]
 
     def __str__(self):
-        return f"{self.d_id} - {self.name}"
+        return f"{self.d_id} - ru {self.name_ru} | uz {self.name_uz}"
 
 
 class Notification(models.Model):

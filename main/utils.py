@@ -23,7 +23,7 @@ def create_1c_user(user):
     """
     try:
         response = requests.post(
-            "http://test.ksbapps.uz:17777/afm/hs/discount_api/register",
+            "http://93.170.11.10:8087/MainBase/hs/discount_api/register",
             json={
                 "code": user.code,
                 "lastName": user.last_name,

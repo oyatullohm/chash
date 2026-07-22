@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from .models import DiscountCardReport, DiscountCardTransaction
 
-BASE_URL = "http://test.ksbapps.uz:17777/afm/hs/discount_api/transactions"
+BASE_URL = "http://93.170.11.10:8087/MainBase/hs/discount_api/transactions"
 LOGIN = settings.API_1C_LOGIN
 PASSWORD = settings.API_1C_PASSWD
 

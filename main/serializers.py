@@ -42,11 +42,6 @@ class QrCodeSerializer(serializers.ModelSerializer):
         fields = ['code' , 'image']
         read_only_fields = ["image", 'code']
 
-from rest_framework import serializers
-from .models import Category  # Modelingizni import qiling
-
-from rest_framework import serializers
-from .models import Category
 
 class CategorySerializer_ru(serializers.ModelSerializer):
 

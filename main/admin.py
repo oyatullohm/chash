@@ -26,7 +26,7 @@ class DiscountCardReportAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("d_id", "name_ru", "name_uz", "parent_id", "record_status_id", "created_at")
-    search_fields = ("d_id", "name", "description")
+    search_fields = ("d_id", "name_ru", "name_uz", "description")
     list_filter = ("record_status_id",)
 # autocomplete_fields ni olib tashlang - agar parent_id oddiy IntegerField bo'lsa (FK emas), autocomplete ishlamaydi
     # autocomplete_fields = ("parent",)

@@ -1,11 +1,9 @@
-from datetime import datetime
-
-import requests
-from django.conf import settings
-from django.db import transaction
-from django.utils import timezone
-
 from .models import DiscountCardReport, DiscountCardTransaction
+from django.db import transaction
+from django.conf import settings
+from django.utils import timezone
+from datetime import datetime
+import requests
 
 BASE_URL = "http://93.170.11.10:8087/MainBase/hs/discount_api/transactions"
 LOGIN = settings.API_1C_LOGIN

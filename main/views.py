@@ -1,9 +1,9 @@
 
+from .Trasaciton import sync_card_transactions, CardNotFoundError, Card1CApiError
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.views.decorators.csrf import csrf_exempt
-from .Trasaciton import sync_card_transactions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import JsonResponse
@@ -46,8 +46,11 @@ def api_send_sms(request):
 def api_login(request):
     data = request.data
     code = data.get('code')
-    firebase_key = data.get('firebase_key', None)
-    user = CustomUser.objects.get(login_code=code)
+    firebase_key = data.get('firebase_key')
+    try:
+        user = CustomUser.objects.get(login_code=code)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({"message": "User not found.", 'success': False}, status=status.HTTP_404_NOT_FOUND)
     if user:
         refresh = RefreshToken.for_user(user)
         user.login_code = random_number()
@@ -125,6 +128,7 @@ def user_balance(request):
     try:
         code = request.user.code
         #code = "7802139070649"
+        report = sync_card_transactions(card_code=code)
         balance = DiscountCardReport.objects.get(code=code)
     except DiscountCardReport.DoesNotExist:
         return Response({'success': False, 'message': 'Balance not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -143,16 +147,7 @@ def api_translation(request):
     balance_data = DiscountCardReportSerializer(balance).data
     return Response({'success': True, 'balance':balance_data })
 
-    
 
-
-from .Trasaciton import (
-    sync_card_transactions,
-    CardNotFoundError,
-    Card1CApiError,
-)
- 
- 
 class TranslationsApiView(APIView):
     def get(self, request):
         user = request.user
@@ -177,7 +172,6 @@ class TranslationsApiView(APIView):
         balance_data = DiscountCardReportSerializer1(balance).data
 
         return Response({"success": True, "code": report.code, "balance": balance_data})
-
 
 
 class QrCodeApiView(APIView):
@@ -213,7 +207,6 @@ def refresh(request):
         return Response({'access': access_token}, status=status.HTTP_200_OK)
     except:
         return Response({'error': 'Invalid refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 @api_view(['GET'])

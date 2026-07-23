@@ -5,9 +5,6 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.db import transaction, IntegrityError
 
-class DiscountPercent(models.Model):
-    percent = models.DecimalField(max_digits=2, decimal_places=0, default=1, verbose_name="Chegirma foizi")
-
 
 class CustomUser(AbstractUser):
     """
@@ -29,11 +26,11 @@ class CustomUser(AbstractUser):
     middle_name = models.CharField(max_length=150, blank=True, verbose_name="Otasining ismi")
     full_name = models.CharField(max_length=450, blank=True, verbose_name="To'liq F.I.O.")
     login_code = models.CharField(max_length=50, null=True, blank=True )
-    discount_percent = models.ForeignKey(
-        DiscountPercent,
-        on_delete=models.PROTECT,
-        related_name="users",
-        verbose_name="Chegirma foizi",
+    discount_percent = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2, 
+        default=0, 
+        verbose_name="Chegirma foizi"
     )
  
     expiry_date = models.DateTimeField(null=True, blank=True, verbose_name="Amal qilish muddati")
@@ -119,10 +116,6 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.uid1c:
             self.uid1c = uuid.uuid4()
- 
-        if not self.discount_percent_id:
-            last_discount = DiscountPercent.objects.order_by("id").last()
-            self.discount_percent = last_discount
  
         # Agar code hali generatsiya qilinmagan bo'lsa (yangi user),
         # race condition (bir vaqtda 2 ta so'rov bir xil kodni generatsiya

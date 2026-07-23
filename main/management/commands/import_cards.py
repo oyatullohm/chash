@@ -5,9 +5,8 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
-from main.models import CustomUser, DiscountPercent
+from main.models import CustomUser
 
-# Kod aynan 13 xonali raqamdan iborat bo'lishi kerak (masalan "7802013700020")
 CODE_PATTERN = re.compile(r"^\d{13}$")
 
 
@@ -18,7 +17,7 @@ def parse_dt(value: str):
     dt = parse_datetime(value)
     if dt is None:
         return None
-    if timezone.is_naive(dt) and timezone.get_current_timezone() is not None:
+    if timezone.is_naive(dt):
         try:
             dt = timezone.make_aware(dt)
         except Exception:
@@ -36,7 +35,13 @@ class Command(BaseCommand):
         json_path = options["json_path"]
 
         with open(json_path, "r", encoding="utf-8") as f:
-            cards = json.load(f)
+            raw = json.load(f)
+
+        # Yangi format: {"total": N, "data": [...]}. Eski (oddiy list) formatni ham qo'llab-quvvatlaymiz.
+        if isinstance(raw, dict):
+            cards = raw.get("data", [])
+        else:
+            cards = raw
 
         created_count = 0
         updated_count = 0
@@ -45,7 +50,6 @@ class Command(BaseCommand):
         for item in cards:
             code = (item.get("code") or "").strip()
 
-            # Kod formatga mos kelmasa (13 xonali raqam emas) - o'tkazib yuboramiz
             if not CODE_PATTERN.match(code):
                 skipped_count += 1
                 self.stdout.write(
@@ -56,32 +60,22 @@ class Command(BaseCommand):
             phone_number = (item.get("phoneNumber") or "").strip()
             username = phone_number if phone_number else code
 
-            discount_percent_value = item.get("discountPercent", 0) or 0
-            discount_percent_obj = DiscountPercent.objects.filter(
-                percent=discount_percent_value
-            ).order_by("id").first()
-            if discount_percent_obj is None:
-                discount_percent_obj = DiscountPercent.objects.create(
-                    percent=discount_percent_value
-                )
-
             defaults = {
                 "username": username,
                 "last_name": item.get("lastName", ""),
                 "first_name": item.get("firstName", ""),
                 "middle_name": item.get("middleName", ""),
                 "full_name": item.get("fullName", ""),
-                "discount_percent": discount_percent_obj,
+                "discount_percent": item.get("discountPercent", 0) or 0,
                 "expiry_date": parse_dt(item.get("expiryDate")),
                 "registration_date": parse_dt(item.get("registrationDate")),
                 "birth_date": parse_dt(item.get("birthDate")),
-                "is_active": item.get("isActive", True),
+                "is_card_active": item.get("isActive", True),
                 "registration": item.get("registration", False),
                 "address": item.get("address", ""),
                 "phone_number": phone_number,
             }
 
-            # username boshqa (boshqa code'ga tegishli) userda band bo'lsa - pass
             username_taken = (
                 CustomUser.objects
                 .filter(username=username)

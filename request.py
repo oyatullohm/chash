@@ -25,8 +25,8 @@ from main.models import CustomUser, DiscountCardReport, DiscountCardTransaction
 # ... qolgan kod ...
 # 1C API sozlamalari
 BASE_URL = "http://93.170.11.10:8087/MainBase/hs/discount_api/transactions"
-LOGIN = "Integrator"
-PASSWORD = "207ffd139b"
+LOGIN = "1"
+PASSWORD = "1"
 
 import json
 import re
